@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<changelog>
+    <release version="0.2" versioncode="5" >
+        <change>Storing data in local database (last 7 days)</change>
+        <change>Displaying change in % since last refresh</change>
+        <change>Displaying change in % since set price point!</change>
+        <change>Fixed: Bug when rotating</change>
+        <change>Fixed: Problem when Cryptsy.com is broken</change>
+    </release>
+    <release version="0.1" versioncode="1">
+        <change>First release</change>
+        <change>Downloading data (USD, and all cryptsy markets)</change>
+    </release>
+</changelog>

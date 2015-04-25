@@ -1,0 +1,82 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" >
+
+    <RelativeLayout
+        android:id="@+id/pricesLayoutTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true">
+        
+        
+        <TextView
+        android:id="@+id/textViewBTCTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="BTC: " />
+    <TextView
+        android:id="@+id/textViewBTCprice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/textViewBTCTitle"
+        android:text="X"/>
+    
+    <TextView
+        android:id="@+id/textViewLTCTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textViewBTCTitle"
+        android:text="LTC: " />
+    <TextView
+        android:id="@+id/textViewLTCprice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textViewLTCTitle"
+        android:layout_toRightOf="@+id/textViewLTCTitle"
+        android:text="X"/>
+    <TextView
+        android:id="@+id/textViewXPMTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textViewLTCTitle"
+        android:text="XPM: " />
+    <TextView
+        android:id="@+id/textViewXPMprice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textViewXPMTitle"
+        android:layout_toRightOf="@+id/textViewXPMTitle"
+        android:text="X"/>
+        
+        
+        
+    </RelativeLayout>
+    
+
+    <ListView
+        android:id="@+id/listViewMarketsSubscribed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/pricesLayoutTop" >
+
+    </ListView>
+
+    <Button
+        android:id="@+id/buttonRefresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/listViewMarketsSubscribed"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:text="Refresh" />
+
+</RelativeLayout>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    
+
+    <RelativeLayout
+        android:id="@+id/layoutRight"
+        android:layout_width="115dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="1dp"
+        android:layout_alignParentRight="true">
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="35dp"
+            android:text="USD:"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textUSD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="X"
+            android:singleLine="true"
+            android:layout_below="@+id/textView1"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textViewPercentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textView1"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/textUSD"
+            android:singleLine="true"
+            android:text="0%"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/textUSDPoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textUSD"
+            android:layout_below="@+id/textViewPercentage"
+            android:text="X"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold" />
+
+         <TextView
+             android:id="@+id/textViewPercentagePricePoint"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_alignLeft="@+id/textView1"
+             android:layout_alignParentRight="true"
+             android:layout_below="@+id/textUSDPoint"
+             android:singleLine="true"
+             android:text="0%"
+             android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layoutMiddle"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/layoutRight" >
+
+         <com.tajchert.cryptsy.ui.AutoResizeTextView
+             android:id="@+id/textName"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_alignParentLeft="true"
+             android:layout_alignParentTop="true"
+             android:layout_toLeftOf="@+id/textCurrency"
+             android:text="Name"
+             android:textAppearance="?android:attr/textAppearanceLarge"
+             android:textStyle="bold" />
+
+         <TextView
+            android:id="@+id/textCurrency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="35dp"
+            android:text="BTC:"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+        <TextView
+            android:id="@+id/textBTC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textCurrency"
+            android:layout_alignParentRight="true"
+            android:text="X"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/textViewPercentageBTC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textCurrency"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/textBTC"
+            android:singleLine="true"
+            android:text="0%"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+        
+        <TextView
+            android:id="@+id/textBTCPoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textViewPercentageBTC"
+            android:layout_alignLeft="@+id/textBTC"
+            android:text="X"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/textViewPercentagePricePointBTC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textCurrency"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/textBTCPoint"
+            android:singleLine="true"
+            android:text="0%"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignTop="@+id/textBTCPoint"
+            android:text="Price point:"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignTop="@+id/textViewPercentageBTC"
+            android:text="Since refresh:"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+        <TextView
+            android:id="@+id/textViewCurrPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignTop="@+id/textBTC"
+            android:text="Current:"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/textViewAgo"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/textView2"
+            android:layout_alignBottom="@+id/textView2"
+            android:layout_toLeftOf="@+id/textViewPercentageBTC"
+            android:layout_toRightOf="@+id/textView2"
+            android:text=""
+            android:textSize="11sp" />
+
+    </RelativeLayout>
+	
+    
+
+</RelativeLayout>

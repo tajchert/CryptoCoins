@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="App is in Alpha/Beta phase, so please expect features like charts, widget, wallet etc. in next updates. Thank you for your patience.\nApp uses Cryptsy.com API.\nIf you appreciate my effort please donate (or give a good review) as app was created in one night instead of sleeping."
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Button
+        android:id="@+id/buttonAuthor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:text="About author" />
+
+    <Button
+        android:id="@+id/buttonDonation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonAuthor"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Buy me a beer" />
+
+    <Button
+        android:id="@+id/buttonContact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonDonation"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Contact me" />
+
+</RelativeLayout>
