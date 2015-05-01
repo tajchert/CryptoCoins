@@ -273,12 +273,6 @@ public class Settings extends Activity {
         if (item.getItemId() == R.id.action_settings) {
 	        startActivity(new Intent(this, Settings.class));
 	    }
-	    if (item.getItemId() == R.id.action_about) {
-	        startActivity(new Intent(this, About.class));
-	    }
-	    if (item.getItemId() == R.id.action_help) {
-	        startActivity(new Intent(this, HelpActivity.class));
-	    }
         return false;
     }
 }

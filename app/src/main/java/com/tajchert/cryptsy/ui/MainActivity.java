@@ -1,6 +1,5 @@
 package com.tajchert.cryptsy.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -11,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 	
 	private final static String PREF_NAME = "com.tajchert.cryptsy";
 	private final static String DATE_TIME_UPDATE = "com.tajchert.cryptsy.lastrundate";
@@ -468,14 +468,6 @@ public class MainActivity extends Activity {
 	        if (item.getItemId() == R.id.action_settings) {
 		        startActivity(new Intent(this, Settings.class));
 		    }
-		    if (item.getItemId() == R.id.action_about) {
-		        startActivity(new Intent(this, About.class));
-		    }
-		    if (item.getItemId() == R.id.action_help) {
-		        startActivity(new Intent(this, HelpActivity.class));
-		    }
 	        return false;
 	    }
-		
-	
 }
