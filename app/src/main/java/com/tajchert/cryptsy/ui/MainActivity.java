@@ -24,6 +24,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.tajchert.cryptsy.R;
 import com.tajchert.cryptsy.database.Market;
 import com.tajchert.cryptsy.database.MarketDataSource;
@@ -35,6 +36,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import io.fabric.sdk.android.Fabric;
+
 
 public class MainActivity extends AppCompatActivity {
 	
@@ -43,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 	private final static String DATE_TIME_KEY = "com.tajchert.cryptsy.firstrundate";
 	
 	private int positionOfClick;
-	
+
 	ProgressDialog progress;
 	TextView btcPriceText;
 	TextView ltcPriceText;
@@ -70,14 +73,12 @@ public class MainActivity extends AppCompatActivity {
 	
 	SharedPreferences prefs;
 	//https://btc-e.com/api/2/ltc_usd/ticker
-	
-	
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Fabric.with(this, new Crashlytics());
 		setContentView(R.layout.activity_main);
-		
 		//AppRater.app_launched(this);
 		prefs = this.getSharedPreferences(PREF_NAME, 0);
 		

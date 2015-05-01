@@ -1,19 +1,16 @@
 package com.tajchert.cryptsy.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -38,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 
-public class Settings extends Activity {
+public class Settings extends AppCompatActivity {
 	private com.tajchert.cryptsy.ui.SettingsListMarketAdapter marketListAdapter;
 	ArrayList<Market> cryptsyMarkets;
 
@@ -262,17 +259,4 @@ public class Settings extends Activity {
     			});
     	alertDialog.show();
 	}
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.nothome, menu);
-		return true;
-	}
-	@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
-        if (item.getItemId() == R.id.action_settings) {
-	        startActivity(new Intent(this, Settings.class));
-	    }
-        return false;
-    }
 }
