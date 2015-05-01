@@ -18,8 +18,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.tajchert.cryptsy.R;
@@ -27,7 +25,7 @@ import com.tajchert.cryptsy.database.Market;
 import com.tajchert.cryptsy.database.MarketDataSource;
 import com.tajchert.cryptsy.json.GetCryptsyMarkets;
 
-
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -46,7 +44,6 @@ public class Settings extends Activity {
 
 	private final static String PREF_NAME = "com.tajchert.cryptsy";
 	private final static String MARKET_LIST = "com.tajchert.cryptsy.marketlist";
-	private final static String BTC_SOURCE = "com.tajchert.cryptsy.btcsource";
 	private final static String DATE_TIME_KEY = "com.tajchert.cryptsy.firstrundate";
 
 	ProgressDialog progress;
@@ -57,10 +54,7 @@ public class Settings extends Activity {
 	ListView marketlist;
 	Button saveButton;
 	Button buttonRefresh;
-	
-	private RadioButton radioButtonBTCE;
-	private RadioButton radioButtonMtGox;
-	private RadioGroup radioSourceGroup;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,10 +67,7 @@ public class Settings extends Activity {
 		marketlist.setDividerHeight(1);
 		saveButton = (Button) findViewById(R.id.buttonSave);
 		buttonRefresh = (Button) findViewById(R.id.buttonRefresh);
-		
-		radioButtonBTCE = (RadioButton) findViewById(R.id.radioButtonBTCE);
-		radioButtonMtGox = (RadioButton) findViewById(R.id.radioButtonMtGox);
-		radioSourceGroup = (RadioGroup) findViewById(R.id.radioSource);
+
 		//this.deleteDatabase("markets.db");
 		datasource = new MarketDataSource(this);
 		
@@ -111,11 +102,6 @@ public class Settings extends Activity {
 		}
 		if(isNetworkAvailable()){
 			//Internet connection
-			if(prefs.getInt(BTC_SOURCE, 2) == 1){
-				radioButtonBTCE.setChecked(true);
-			}else{
-				radioButtonMtGox.setChecked(true);
-			}
 			if (!prefs.getBoolean(MARKET_LIST, false) && progress == null){
 				CryptsyMarkets MyTask = new CryptsyMarkets();
 				MyTask.execute();
@@ -144,12 +130,6 @@ public class Settings extends Activity {
 			writeFile();
 		} catch (Exception e) {
 			Toast.makeText(getApplicationContext(),"Error during save of markets.", Toast.LENGTH_SHORT).show();
-		}
-		if(radioButtonBTCE.isChecked()){
-			prefs.edit().putInt(BTC_SOURCE, 1).commit();
-		}
-		if(radioButtonMtGox.isChecked()){
-			prefs.edit().putInt(BTC_SOURCE, 2).commit();
 		}
 		super.onBackPressed();
 	}
@@ -250,10 +230,13 @@ public class Settings extends Activity {
 
 	private void readFile() {
 		try {
-			FileInputStream fin = openFileInput("cryptsyMarkets.obj");
-			ObjectInputStream in = new ObjectInputStream(fin);
-			cryptsyMarkets = (ArrayList<Market>) in.readObject();
-			setList();
+			File file = new File("cryptsyMarkets.obj");
+			if(file.exists()) {
+				FileInputStream fin = openFileInput("cryptsyMarkets.obj");
+				ObjectInputStream in = new ObjectInputStream(fin);
+				cryptsyMarkets = (ArrayList<Market>) in.readObject();
+				setList();
+			}
 		} catch (StreamCorruptedException e) {
 			e.printStackTrace();
 		} catch (OptionalDataException e) {

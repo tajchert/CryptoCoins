@@ -3,44 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
-    <TextView
-        android:id="@+id/textViewUSDsource"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="15dp"
-        android:text="USD exchange rate source: "
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-    
-     <RadioGroup
-        android:id="@+id/radioSource"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/textViewUSDsource" >
 
-        <RadioButton
-            android:id="@+id/radioButtonBTCE"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="BTC-e" />
-
-        <RadioButton
-            android:id="@+id/radioButtonMtGox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/radioButtonBTCE"
-            android:text="MtGox" />
-    </RadioGroup>
-    
     <TextView
         android:id="@+id/ListTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/radioSource"
         android:text="Select markets:"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 

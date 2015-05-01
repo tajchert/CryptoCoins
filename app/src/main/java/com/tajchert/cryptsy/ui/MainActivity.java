@@ -30,14 +30,10 @@ import com.tajchert.cryptsy.database.MarketDataSource;
 import com.tajchert.cryptsy.ebtc.EbtcTicker;
 import com.tajchert.cryptsy.ebtc.GetEbtc;
 import com.tajchert.cryptsy.json.GetCryptsyMarkets;
-import com.tajchert.cryptsy.mtgox.GetMtGox;
-import com.tajchert.cryptsy.mtgox.MtGoxOrderType;
-
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 
 public class MainActivity extends Activity {
@@ -45,7 +41,6 @@ public class MainActivity extends Activity {
 	private final static String PREF_NAME = "com.tajchert.cryptsy";
 	private final static String DATE_TIME_UPDATE = "com.tajchert.cryptsy.lastrundate";
 	private final static String DATE_TIME_KEY = "com.tajchert.cryptsy.firstrundate";
-	private final static String BTC_SOURCE = "com.tajchert.cryptsy.btcsource";
 	
 	private int positionOfClick;
 	
@@ -67,13 +62,11 @@ public class MainActivity extends Activity {
 	EbtcTicker tickerBTC;
 	EbtcTicker tickerLTC;
 	double tickerXPM;
-	List<MtGoxOrderType> mtgox;
 	ArrayList<Market> allCryptsyMarkets;
 	SparseArray<Market> favMarkets;
 	DecimalFormat df = new DecimalFormat("0.#");
 	DecimalFormat prices = new DecimalFormat("0.###");
-	
-	boolean useMtGox = true;
+
 	
 	SharedPreferences prefs;
 	//https://btc-e.com/api/2/ltc_usd/ticker
@@ -140,11 +133,6 @@ public class MainActivity extends Activity {
 				//readFile();
 				favMarkets = (SparseArray<Market>) datasource.getAllSubscibedMarkets();
 				if(favMarkets.size()>0){
-					if(prefs.getInt(BTC_SOURCE, 2) == 2){
-						useMtGox = true;
-					}else{
-						useMtGox = false;
-					}
 					for(int i = 0; i < favMarkets.size(); i++) {
 						   Market mark = favMarkets.get(favMarkets.keyAt(i));
 						   Log.d("CryptoCoins", "market: " + mark.name +" - "+mark.lasttradeprice);
@@ -386,13 +374,7 @@ public class MainActivity extends Activity {
 	        	tickerBTC = btcJson.makeAndGet(0);
 	        	GetEbtc ltcJson = new GetEbtc();
 	        	tickerLTC = ltcJson.makeAndGet(1);
-	        	
-	        	//MtGox
-	        	if(useMtGox){
-		        	GetMtGox tmpGox = new GetMtGox();
-		        	mtgox = tmpGox.makeAndGet();
-	        	}
-	        	
+
 	        	//XPM TODO
 	        	GetCryptsyMarkets tmpJson = new GetCryptsyMarkets();
 	        	tmpJson.url = "http://pubapi.cryptsy.com/api.php?method=singlemarketdata&marketid=63";
@@ -414,12 +396,7 @@ public class MainActivity extends Activity {
 
 	        @Override
 	        protected void onPostExecute(String result) {
-	        	
-	        	//MtGox
-	        	if(useMtGox){
-		        	tickerBTC = new EbtcTicker();
-		        	tickerBTC.avg = mtgox.get(0).value;
-	        	}
+
 	        	btcPriceText.setText(prices.format(tickerBTC.avg)+"$");
 	        	ltcPriceText.setText(prices.format(tickerLTC.avg)+"$");
 	        	//XPM TODO
