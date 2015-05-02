@@ -89,10 +89,7 @@ public class Settings extends AppCompatActivity {
 		}
 		if(isNetworkAvailable() && (cryptsyMarkets == null || cryptsyMarkets.size() == 0)) {
 			//Internet connection
-			if(!isRefreshing) {
-				CryptsyMarkets MyTask = new CryptsyMarkets();
-				MyTask.execute();
-			}
+			dialogRefresh();
 		} else if (cryptsyMarkets == null || cryptsyMarkets.size() == 0){
 			//No internet connection
 			dialog("CryptoCoins", "No Internet connection. Try again later.");
@@ -237,26 +234,27 @@ public class Settings extends AppCompatActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 		if (item.getItemId() == R.id.action_refresh) {
-			try {
-				if(!isRefreshing) {
-					dialogRefresh("Refresh", "You are about to refresh whole list of currencies, which is around 5MB.\n\n Do you want to proceed? ");
-				}
-			} catch (Exception e) {
-				dialog("CryptoCoins", "Some very unexpected error during downloading data.\nPlease try again later.");
-			}
+			dialogRefresh();
 		}
 		return false;
 	}
 
-	private void dialogRefresh(String title, String content){
+	private void dialogRefresh(){
+		if(isRefreshing) {
+			return;
+		}
 		AlertDialog alertDialog = new AlertDialog.Builder(Settings.this).create();
-		alertDialog.setTitle(title);
-		alertDialog.setMessage(content);
+		alertDialog.setTitle("Refresh");
+		alertDialog.setMessage( "You are about to refresh whole list of currencies, which is around 5MB.\n\nDo you want to proceed?");
 		alertDialog.setCancelable(true);
 		alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
-				CryptsyMarkets MyTask = new CryptsyMarkets();
-				MyTask.execute();
+				try {
+					CryptsyMarkets MyTask = new CryptsyMarkets();
+					MyTask.execute();
+				} catch (Exception e) {
+					dialog("CryptoCoins", "Some very unexpected error during downloading data.\nPlease try again later.");
+				}
 			}
 		});
 		alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "CANCEL", new DialogInterface.OnClickListener() {

@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.tajchert.cryptsy.R;
@@ -130,9 +131,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             } else {
+                Toast.makeText(MainActivity.this, "You need to select at least one currency", Toast.LENGTH_LONG).show();
                 startActivity(new Intent(MainActivity.this, Settings.class));
             }
-
         } else {
             //No internet connection
             dialog("CryptoCoins", "No Internet connection. Try again later.");
