@@ -4,38 +4,20 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/ListTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:text="Select markets:"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
     <ListView
         android:id="@+id/listViewMarkets"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="match_parent"
         android:layout_above="@+id/buttonSave"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/ListTitle"
-        android:layout_marginTop="16dp" >
+        android:layout_alignParentLeft="true" >
 
     </ListView>
 
-    <Button
-        android:id="@+id/buttonRefresh"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/ListTitle"
-        android:text="Refresh list" />
 
     <Button
         android:id="@+id/buttonSave"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="45dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:text="Save" />

@@ -3,6 +3,8 @@
     <color name="theme_dark_primary">#303F9F</color>
     <color name="theme_primary">#3F51B5</color>
     <color name="theme_accent">#00BCD4</color>
+    <color name="theme_accent_refresh_one">#ff9000</color>
+    <color name="theme_accent_refresh_two">#00ccff</color>
 
     <color name="theme_background">#ff3f4242</color>
 </resources>

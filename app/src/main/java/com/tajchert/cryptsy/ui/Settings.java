@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -50,7 +52,6 @@ public class Settings extends AppCompatActivity {
 	SharedPreferences prefs;
 	ListView marketlist;
 	Button saveButton;
-	Button buttonRefresh;
 
 
 	@Override
@@ -64,24 +65,10 @@ public class Settings extends AppCompatActivity {
 		marketlist = (ListView) findViewById(R.id.listViewMarkets);
 		marketlist.setDividerHeight(1);
 		saveButton = (Button) findViewById(R.id.buttonSave);
-		buttonRefresh = (Button) findViewById(R.id.buttonRefresh);
 
 		//this.deleteDatabase("markets.db");
 		datasource = new MarketDataSource(this);
-		
-		
-		buttonRefresh.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				try {
-					if(!isRefreshing) {
-						CryptsyMarkets MyTask = new CryptsyMarkets();
-						MyTask.execute();
-					}
-				} catch (Exception e) {
-					dialog("CryptoCoins", "Some very unexpected error during downloading data.\nPlease try again later.");
-				}
-			}
-		});
+
 		saveButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				onBackPressed();
@@ -239,5 +226,44 @@ public class Settings extends AppCompatActivity {
 		for (int i = 0; i < sparseArray.size(); i++)
 			arrayList.add(sparseArray.valueAt(i));
 		return arrayList;
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.settings, menu);
+		return true;
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		super.onOptionsItemSelected(item);
+		if (item.getItemId() == R.id.action_refresh) {
+			try {
+				if(!isRefreshing) {
+					dialogRefresh("Refresh", "You are about to refresh whole list of currencies, which is around 5MB.\n\n Do you want to proceed? ");
+				}
+			} catch (Exception e) {
+				dialog("CryptoCoins", "Some very unexpected error during downloading data.\nPlease try again later.");
+			}
+		}
+		return false;
+	}
+
+	private void dialogRefresh(String title, String content){
+		AlertDialog alertDialog = new AlertDialog.Builder(Settings.this).create();
+		alertDialog.setTitle(title);
+		alertDialog.setMessage(content);
+		alertDialog.setCancelable(true);
+		alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				CryptsyMarkets MyTask = new CryptsyMarkets();
+				MyTask.execute();
+			}
+		});
+		alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "CANCEL", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+		alertDialog.show();
 	}
 }
