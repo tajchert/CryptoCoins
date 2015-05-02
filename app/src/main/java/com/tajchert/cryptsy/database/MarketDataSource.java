@@ -73,7 +73,7 @@ public class MarketDataSource {
 			Log.d("CryptoCoins", "0");
 			values.put(MySQLiteHelper.COLUMN_SUBSCRIBED, 0);
 		}
-		database.update(MySQLiteHelper.TABLE_MARKETS, values, MySQLiteHelper.COLUMN_MARKET_ID +" = "+ marketid , null);
+		database.update(MySQLiteHelper.TABLE_MARKETS, values, MySQLiteHelper.COLUMN_MARKET_ID + " = " + marketid, null);
 		/*
 		Cursor cursor = database.query(MySQLiteHelper.TABLE_MARKETS, allColumns, MySQLiteHelper.COLUMN_MARKET_ID +" = "+ marketid, null,null, null, null);
 		cursor.moveToFirst();
@@ -94,7 +94,7 @@ public class MarketDataSource {
 		}else{
 			values.put(MySQLiteHelper.COLUMN_SUBSCRIBED, 0);
 		}
-		database.update(MySQLiteHelper.TABLE_MARKETS, values, MySQLiteHelper.COLUMN_MARKET_ID +" = "+ marketid , null);
+		database.update(MySQLiteHelper.TABLE_MARKETS, values, MySQLiteHelper.COLUMN_MARKET_ID + " = " + marketid, null);
 		
 	}
 	
@@ -111,7 +111,7 @@ public class MarketDataSource {
 		ContentValues values = new ContentValues();
 		values.put(MySQLiteHelper.COLUMN_PRICE_POINT, pricepoint);
 		values.put(MySQLiteHelper.COLUMN_PRICE_POINT_DOL, pricepointdol);
-		database.update(MySQLiteHelper.TABLE_MARKETS, values, MySQLiteHelper.COLUMN_MARKET_ID +" = "+ marketid , null);
+		database.update(MySQLiteHelper.TABLE_MARKETS, values, MySQLiteHelper.COLUMN_MARKET_ID + " = " + marketid, null);
 	}
 	/*public Market createMarket(String fullName, String primarycode, String secondarycode, double price, double priceDol,
 			double pricePoint, double dolPoint, Calendar date, int marketid, boolean subscribed) {
@@ -197,6 +197,18 @@ public class MarketDataSource {
 			return null;
 		}
 	}
+
+	public boolean isSubscribedTo(int marketId) {
+		if(exists(marketId)) {
+			Cursor cursor = database.query(MySQLiteHelper.TABLE_PRICES, priceColumns, MySQLiteHelper.COLUMN_MARKET_ID + " = " + marketId, null, null, null, null);
+			cursor.moveToFirst();
+			boolean isActive = cursorSubscription(cursor);
+			cursor.close();
+			return isActive;
+		}
+		return false;
+	}
+
 	public int countLastPrices(int marketId) {
 		PriceRecord pRecord = new PriceRecord();
 		Cursor cursor = database.query(MySQLiteHelper.TABLE_PRICES, priceColumns, MySQLiteHelper.COLUMN_MARKET_ID+" = " +  marketId , null, null, null, null);
@@ -241,6 +253,14 @@ public class MarketDataSource {
 		return tmpmarkets;
 	}*/
 
+	private boolean cursorSubscription(Cursor cursor) {
+		if(cursor.getInt(2) == 1){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
 	private Market cursorToMarket(Cursor cursor) {
 		/*{ MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_MARKET_ID,
 			 MySQLiteHelper.COLUMN_SUBSCRIBED , MySQLiteHelper.COLUMN_PRICE_POINT, MySQLiteHelper.COLUMN_PRICE_POINT_DOL
@@ -258,9 +278,13 @@ public class MarketDataSource {
 		market.pricePointDol = cursor.getFloat(4);
 		//Log.d("CryptoCoins", "cursor.getFloat(3): " + cursor.getFloat(3));
 		//Log.d("CryptoCoins", "cursor.getFloat(4): " + cursor.getFloat(4));
-		market.primarycode = cursor.getString(5);
-		market.secondarycode = cursor.getString(6);
-		market.name = cursor.getString(7);
+		try {
+			market.primarycode = cursor.getString(5);
+			market.secondarycode = cursor.getString(6);
+			market.name = cursor.getString(7);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return market;
 	}
 }

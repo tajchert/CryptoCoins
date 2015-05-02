@@ -1,5 +1,17 @@
 package com.tajchert.cryptsy.json;
 
+import android.content.Context;
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.tajchert.cryptsy.database.Market;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,29 +23,18 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import android.content.Context;
-import android.util.Log;
-
-import com.google.gson.Gson;
-import com.tajchert.cryptsy.database.Market;
-
 public class GetCryptsyMarkets {
+	private static final String TAG = "GetCryptsyMarkets";
 	
 	public String url = "http://pubapi.cryptsy.com/api.php?method=marketdatav2";
 	HttpGet httppost;
 	Gson gson = new Gson();
-	Context cont;
+	Context context;
 	
 	CryptsyResults results;
 	
 	public List <Market> makeAndGet(Context cont){
-		this.cont = cont;
+		this.context = cont;
 		//InputStream source = retrieveStream(MtGoxResults.url);
 		httppost =  new HttpGet(url);
 		httppost.setHeader("Content-type", "application/json");
@@ -66,14 +67,14 @@ public class GetCryptsyMarkets {
 		}
 		String output = sb.toString();
 		output = correctChar(output);
-		writeToFile(output);
+		writeFile(output, context);
 		results = gson.fromJson(output, CryptsyResults.class);
 		List <Market> lista = results.markets;
 		return lista;
 	}
 	
-	public Market getSingle(Context cont){
-		this.cont = cont;
+	public Market getSingle(Context context){
+		this.context = context;
 		//InputStream source = retrieveStream(MtGoxResults.url);
 		httppost =  new HttpGet(url);
 		httppost.setHeader("Content-type", "application/json");
@@ -110,7 +111,6 @@ public class GetCryptsyMarkets {
 		}
 		String output = sb.toString();
 		output = correctChar(output);
-		//writeToFile(output);
 		results = gson.fromJson(output, CryptsyResults.class);
 		//results.markets.get(0).date = Calendar.getInstance();
 		//Log.v("Cryptsy", "End2" + results.markets.get(0).lasttradeprice);
@@ -118,17 +118,18 @@ public class GetCryptsyMarkets {
 		//List <CryptsyMarket> lista = results.markets;
 		return results.markets.get(0);
 	}
-	
-	private void writeToFile(String data) {
-	    try {
-	        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(cont.openFileOutput("result.txt", Context.MODE_PRIVATE));
-	        outputStreamWriter.write(data);
-	        outputStreamWriter.close();
-	    }
-	    catch (IOException e) {
-	        Log.e("Exception", "File write failed: " + e.toString());
-	    } 
+
+	private void writeFile(String data, Context context) {
+		try {
+			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("cryptsyMarkets.txt", Context.MODE_PRIVATE));
+			outputStreamWriter.write(data);
+			outputStreamWriter.close();
+		}
+		catch (IOException e) {
+			Log.e("Exception", "File write failed: " + e.toString());
+		}
 	}
+
 	private  String correctChar(String in){
 		in = in.replace("\"return\":{", "");
 		in = in.replace("\"markets\":{\"", "\"markets\":[{\"topic\":\"");

@@ -8,7 +8,7 @@ package com.tajchert.cryptsy.ui;
  * 
  * Everyone is permitted to copy and distribute verbatim or modified
  * copies of this license document, and changing it is allowed as long
- * as the name is changed.
+ * as the box is changed.
  * 
  *            DO WHAT YOU WANT TO PUBLIC LICENSE
  *   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
@@ -51,7 +51,7 @@ public class AutoResizeTextView extends TextView {
     // Flag for text and/or size changes to force a resize
     private boolean mNeedsResize = false;
 
-    // Text size that is set from code. This acts as a starting point for resizing
+    // Text size that is set from marketName. This acts as a starting point for resizing
     private float mTextSize;
 
     // Temporary upper bounds on the starting text size

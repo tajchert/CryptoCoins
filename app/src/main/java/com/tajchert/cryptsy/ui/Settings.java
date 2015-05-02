@@ -11,32 +11,32 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.tajchert.cryptsy.R;
 import com.tajchert.cryptsy.database.Market;
 import com.tajchert.cryptsy.database.MarketDataSource;
+import com.tajchert.cryptsy.json.CryptsyResults;
 import com.tajchert.cryptsy.json.GetCryptsyMarkets;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OptionalDataException;
-import java.io.StreamCorruptedException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.List;
 
 public class Settings extends AppCompatActivity {
-	private com.tajchert.cryptsy.ui.SettingsListMarketAdapter marketListAdapter;
+	private MarketCheckAdapter marketListAdapter;
 	ArrayList<Market> cryptsyMarkets;
 
 	private final static String PREF_NAME = "com.tajchert.cryptsy";
@@ -46,7 +46,7 @@ public class Settings extends AppCompatActivity {
 	ProgressDialog progress;
 	
 	private MarketDataSource datasource;
-
+	private static boolean isRefreshing;
 	SharedPreferences prefs;
 	ListView marketlist;
 	Button saveButton;
@@ -57,6 +57,7 @@ public class Settings extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		prefs = this.getSharedPreferences(PREF_NAME, 0);
 
@@ -72,10 +73,12 @@ public class Settings extends AppCompatActivity {
 		buttonRefresh.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				try {
-					CryptsyMarkets MyTask = new CryptsyMarkets();
-					MyTask.execute();
+					if(!isRefreshing) {
+						CryptsyMarkets MyTask = new CryptsyMarkets();
+						MyTask.execute();
+					}
 				} catch (Exception e) {
-					dialog("CryptoCoins", "Some very unexpected error during downloading data - please report to thetajchert@gmail.com");
+					dialog("CryptoCoins", "Some very unexpected error during downloading data.\nPlease try again later.");
 				}
 			}
 		});
@@ -92,18 +95,18 @@ public class Settings extends AppCompatActivity {
 		
 		cryptsyMarkets = new ArrayList<Market>();
 		try {
-			readFile();
+			cryptsyMarkets = (ArrayList<Market>) readFromFile();
 			setList();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if(isNetworkAvailable()){
+		if(isNetworkAvailable() && (cryptsyMarkets == null || cryptsyMarkets.size() == 0)) {
 			//Internet connection
-			if (!prefs.getBoolean(MARKET_LIST, false) && progress == null){
+			if(!isRefreshing) {
 				CryptsyMarkets MyTask = new CryptsyMarkets();
 				MyTask.execute();
 			}
-		}else{
+		} else if (cryptsyMarkets == null || cryptsyMarkets.size() == 0){
 			//No internet connection
 			dialog("CryptoCoins", "No Internet connection. Try again later.");
 		}
@@ -122,12 +125,7 @@ public class Settings extends AppCompatActivity {
 	}
 	@Override
 	public void onBackPressed() {
-		cryptsyMarkets = marketListAdapter.data;
-		try {
-			writeFile();
-		} catch (Exception e) {
-			Toast.makeText(getApplicationContext(),"Error during save of markets.", Toast.LENGTH_SHORT).show();
-		}
+		cryptsyMarkets = marketListAdapter.marketList;
 		super.onBackPressed();
 	}
 
@@ -140,13 +138,11 @@ public class Settings extends AppCompatActivity {
 			GetCryptsyMarkets tmpJson = new GetCryptsyMarkets();
 			try {
 				cryptsyMarkets = (ArrayList<Market>) tmpJson.makeAndGet(Settings.this);
+				Collections.sort(cryptsyMarkets);
+				prefs.edit().putBoolean(MARKET_LIST, true).apply();
+				prefs.edit().putLong(DATE_TIME_KEY, System.currentTimeMillis()).apply();
 			} catch (Exception e) {
 			}
-			Collections.sort(cryptsyMarkets);
-			prefs.edit().putBoolean(MARKET_LIST, true).commit();
-			long todayDate = Calendar.getInstance().getTimeInMillis();
-			prefs.edit().putLong(DATE_TIME_KEY, todayDate).commit();
-			
 			Log.d("CryptoCoins", "doInBackground - Executed");
 			return "Executed";
 		}
@@ -154,39 +150,26 @@ public class Settings extends AppCompatActivity {
 		@Override
 		protected void onPostExecute(String result) {
 			Log.d("CryptoCoins", "onPostExecute");
-			try {
-				writeFile();
-				prefs.edit().putBoolean(MARKET_LIST, true).commit();
-				Log.d("CryptoCoins", "MARKET_LIST = true");
-			} catch (IOException e) {
-			}
 			for(Market market: cryptsyMarkets){
 				datasource.createMarket(market.marketid, market.isSubscribed, market.primarycode, market.secondarycode, market.primaryname + "-" + market.secondarycode);
 				datasource.createMarketPrice(market.lasttradeprice, 0, Calendar.getInstance(), market.marketid);
 				//datasource.createMarket(market.primaryname + " - " + market.secondarycode, market.primarycode, market.secondarycode,market.lasttradeprice, market.priceUSD, market.pricePoint, market.pricePointDol, Calendar.getInstance(), market.marketid, market.isSubscribed);
 			}
-			//TODO
 			setList();
+			isRefreshing = false;
 			progress.dismiss();
-			/* for(Market market : cryptsyMarkets){ //Log.d("Cryptsy",
-			  market.primarycode+"-"+market.secondarycode +" @ " +
-			  market.lasttradeprice); if(market.secondarycode.equals("BTC")){
-			 market.priceUSD = market.lasttradeprice * tickerBTC.avg; }
-			  if(market.secondarycode.equals("LTC")){ market.priceUSD =
-			  market.lasttradeprice * tickerLTC.avg; } } for(CryptsyMarket
-			  market : cryptsyMarkets){ try { Log.d("Cryptsy",
-			  market.primarycode+"-"+market.secondarycode +" @ " +
-			  df.format(market.priceUSD) +"$"); } catch (Exception e) { } }*/
-			 
-
 		}
 
 		@Override
 		protected void onPreExecute() {
+			isRefreshing = true;
 			cryptsyMarkets = new ArrayList<Market>();
 			progress = new ProgressDialog(Settings.this);
 			progress.setTitle("CryptoCoins");
 			progress.setMessage("Wait while downloading list of all currencies...");
+			progress.setIndeterminate(true);
+			progress.setCancelable(false);
+			progress.setCanceledOnTouchOutside(false);
 			progress.show();
 		}
 
@@ -196,55 +179,44 @@ public class Settings extends AppCompatActivity {
 	}
 
 	private void setList() {
-		marketListAdapter = new com.tajchert.cryptsy.ui.SettingsListMarketAdapter((ArrayList<Market>) cryptsyMarkets, Settings.this, datasource);
+
+		SparseArray<Market> favMarkets = (SparseArray<Market>) datasource.getAllSubscibedMarkets();
+		marketListAdapter = new MarketCheckAdapter(Settings.this, R.layout.list_market_item, cryptsyMarkets, datasource, asList(favMarkets));
 		marketlist.setAdapter(marketListAdapter);
 		marketListAdapter.notifyDataSetChanged();
-		/*marketlist.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> a, View view, int position,long id) {
-				CheckBox cb = (CheckBox) view.findViewById(R.id.checkBoxSub);
-				if (cb.isChecked()) {
-					cb.setChecked(false);
-					cryptsyMarkets.get(position).isSubscribed = false;
-				} else {
-					cb.setChecked(true);
-					cryptsyMarkets.get(position).isSubscribed = true;
-				}
-			}
-		});*/
-
-		
-
 	}
 
-	private void writeFile() throws IOException {
-		FileOutputStream fos = openFileOutput("cryptsyMarkets.obj",Context.MODE_PRIVATE);
-		ObjectOutputStream out = new ObjectOutputStream(fos);
-		out.writeObject(cryptsyMarkets);
-		out.close();
-		fos.close();
-	}
 
-	private void readFile() {
+
+	private List<Market> readFromFile() {
+		String ret = "";
 		try {
-			File file = new File("cryptsyMarkets.obj");
-			if(file.exists()) {
-				FileInputStream fin = openFileInput("cryptsyMarkets.obj");
-				ObjectInputStream in = new ObjectInputStream(fin);
-				cryptsyMarkets = (ArrayList<Market>) in.readObject();
-				setList();
+			InputStream inputStream = openFileInput("cryptsyMarkets.txt");
+			if ( inputStream != null ) {
+				InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+				BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+				String receiveString = "";
+				StringBuilder stringBuilder = new StringBuilder();
+
+				while ( (receiveString = bufferedReader.readLine()) != null ) {
+					stringBuilder.append(receiveString);
+				}
+
+				inputStream.close();
+				ret = stringBuilder.toString();
+
+				Gson gson = new Gson();
+				CryptsyResults results = gson.fromJson(ret, CryptsyResults.class);
+				return results.markets;
 			}
-		} catch (StreamCorruptedException e) {
-			e.printStackTrace();
-		} catch (OptionalDataException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		}
+		catch (FileNotFoundException e) {
+			Log.e("login activity", "File not found: " + e.toString());
+		} catch (IOException e) {
+			Log.e("login activity", "Can not read file: " + e.toString());
+		}
+
+		return null;
 	}
 	
 	private void dialog(String title, String content){
@@ -253,10 +225,19 @@ public class Settings extends AppCompatActivity {
     	alertDialog.setMessage(content);
     	alertDialog.setCancelable(true);
     	alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-    		   public void onClick(DialogInterface dialog, int which) {
-    			   dialog.dismiss();
-    			   }
-    			});
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
     	alertDialog.show();
+	}
+
+
+	public static <C> ArrayList<C> asList(SparseArray<C> sparseArray) {
+		if (sparseArray == null) return null;
+		ArrayList<C> arrayList = new ArrayList<C>(sparseArray.size());
+		for (int i = 0; i < sparseArray.size(); i++)
+			arrayList.add(sparseArray.valueAt(i));
+		return arrayList;
 	}
 }

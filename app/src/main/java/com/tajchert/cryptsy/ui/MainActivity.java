@@ -79,16 +79,12 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		Fabric.with(this, new Crashlytics());
 		setContentView(R.layout.activity_main);
-		//AppRater.app_launched(this);
 		prefs = this.getSharedPreferences(PREF_NAME, 0);
 		
 		
 		long todayDate = Calendar.getInstance().getTimeInMillis();
 		long firstRunDate = prefs.getLong(DATE_TIME_KEY, todayDate); 
-		
-		/*if(firstRunDate == todayDate){
-			startActivity(new Intent(MainActivity.this, Settings.class));
-		}*/
+
 		df.setMaximumFractionDigits(8);
 		
 		
@@ -116,12 +112,6 @@ public class MainActivity extends AppCompatActivity {
 				
 			}
 		});
-		
-		
-		//BTCStock MyTask= new BTCStock();
-        //MyTask.execute();
-		
-		
 	}
 	@Override
 	protected void onResume() {
@@ -170,26 +160,7 @@ public class MainActivity extends AppCompatActivity {
 	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 	    return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 	}
-	
-	
-	/*private void setList() {
-		
-		marketListAdapter = new MainListMarketAdapter((ArrayList<Market>) adapterList, MainActivity.this);
-		marketlist.setAdapter(marketListAdapter);
 
-		marketListAdapter.notifyDataSetChanged();
-		
-		marketlist.setOnItemClickListener(new OnItemClickListener() {
-			  @Override
-			  public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				  positionOfClick = position;
-				  AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-				  builder.setMessage("Do you want to set up a price point to calculate change in % ?").setPositiveButton("Yes", dialogClickListener)
-				      .setNegativeButton("No/Delete", dialogClickListener).show();
-			  }
-			}); 
-		
-	}*/
 	DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 	    @Override
 	    public void onClick(DialogInterface dialog, int which) {
@@ -251,9 +222,6 @@ public class MainActivity extends AppCompatActivity {
 		int successes = 0;
 		@Override
 		protected String doInBackground(String... params) {
-			/*if(cryptsyMarkets == null || cryptsyMarkets.size()==0){
-				return "Executed";
-			}*/
 			favMarkets = (SparseArray<Market>) datasource.getAllSubscibedMarkets();
 			if(favMarkets != null && favMarkets.size() >0){
 				GetCryptsyMarkets tmpJson = new GetCryptsyMarkets();
@@ -293,11 +261,7 @@ public class MainActivity extends AppCompatActivity {
 							market.last.priceDol = tmpMarket.last.priceDol;
 							market.secondarycode = tmpMarket.secondarycode;
 							market.primarycode = tmpMarket.primarycode;
-							
-							//Log.d("CryptoCoins", "market: " + df.format(market.lasttradeprice) +" - "  + df.format(tmpMarket.lasttradeprice));
-							//market = tmpMarket;
-							//Log.d("CryptoCoins", "market code: " + favMarkets.get(key).primarycode);
-							//tmpArr.put(tmpMarket.marketid, tmpMarket);
+
 							adapterList.add(market);
 							runOnUiThread(returnRes);
 							successes +=1;
@@ -307,14 +271,11 @@ public class MainActivity extends AppCompatActivity {
 								progress = null;
 							} catch (Exception e4) {
 							}
-							//dialog("Temporary problem (cryptsy.com)", "Problem with access to some or all markets.\nSorry. Please try again later.");
 						}
-				} 
-				//favMarkets = tmpArr;
+				}
 			}else {
-				try {
+				if(favMarkets != null) {
 					successes=favMarkets.size();
-				} catch (Exception e) {
 				}
 				try {
 					progress.dismiss();
@@ -322,7 +283,6 @@ public class MainActivity extends AppCompatActivity {
 				} catch (Exception e4) {
 				}
 			}
-			
 			Log.d("CryptoCoins", "Done");
 			return "Executed";
 		}
@@ -337,11 +297,6 @@ public class MainActivity extends AppCompatActivity {
 					dialog("Some fails", "Due to problems with Crypsty.com we were able to get only "+ successes +" out of " + favMarkets.size() +" markets.\nTry again in a second");
 				}
 			}
-			/*try {
-				progress.dismiss();
-				progress = null;
-			} catch (Exception e) {
-			}*/
 			
 		}
 
@@ -356,6 +311,8 @@ public class MainActivity extends AppCompatActivity {
         	progress = new ProgressDialog(MainActivity.this);
 			progress.setTitle("CryptoCoins");
 			progress.setMessage("Updating selected markets.");
+			progress.setCancelable(false);
+			progress.setCanceledOnTouchOutside(false);
 			progress.show();
 			
 		}
@@ -422,11 +379,6 @@ public class MainActivity extends AppCompatActivity {
 	        			
 	        		}
 	        	}
-	        	/*CryptsyStock MyCryptsyStockTask= new CryptsyStock();
-	            MyCryptsyStockTask.execute();*/
-	        	//Log.d("Cryptsy", "tickerBTC:" + tickerBTC.avg);
-	        	//Log.d("Cryptsy", "tickerLTC:" + tickerLTC.avg);
-	            
 	        }
 
 	        @Override
@@ -439,6 +391,8 @@ public class MainActivity extends AppCompatActivity {
 	        	progress = new ProgressDialog(MainActivity.this);
 				progress.setTitle("CryptoCoins");
 				progress.setMessage("Updating USD prices (BTC and LTC).");
+				progress.setCancelable(false);
+				progress.setCanceledOnTouchOutside(false);
 				progress.show();
 	        }
 
